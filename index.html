@@ -1733,10 +1733,18 @@
     });
 
 
-    localStorage.setItem(
-        "dataTAT",
-        JSON.stringify(dataTAT)
-    );
+    async function loadData() {
+    const response = await fetch(API_URL + "/data");
+    const result = await response.json();
+
+    if (result.success) {
+        dataTAT = result.data;
+        renderTable();
+        updateDashboard();
+        updateStatistics();
+        updateCharts();
+    }
+}
 
 
     /* ==================================================
