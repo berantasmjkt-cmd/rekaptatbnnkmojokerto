@@ -1,0 +1,3515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistem Rekapitulasi Data TAT BNN KOTA MOJOKERTO</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #073b7a;
+            --primary-dark: #032b59;
+            --secondary: #0b63ce;
+            --blue-light: #eaf3ff;
+            --background: #f4f7fb;
+            --white: #ffffff;
+            --text: #172033;
+            --muted: #718096;
+            --border: #e2e8f0;
+            --danger: #dc3545;
+            --success: #198754;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: linear-gradient(180deg, #032b59, #0755a5);
+            color: white;
+            padding: 25px 15px;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 10px 30px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .logo-text h2 {
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .logo-text p {
+            font-size: 10px;
+            opacity: .75;
+            margin-top: 3px;
+        }
+
+        .menu-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: .55;
+            padding: 10px 12px;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin: 5px 0;
+        }
+
+        .menu button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: white;
+            padding: 13px 12px;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+        .menu button:hover,
+        .menu button.active {
+            background: rgba(255,255,255,.14);
+        }
+
+        .menu button i {
+            width: 25px;
+            margin-right: 7px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            border-top: 1px solid rgba(255,255,255,.15);
+            padding-top: 15px;
+            font-size: 10px;
+            opacity: .65;
+            line-height: 1.6;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .topbar-title h1 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .topbar-title p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--blue-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-text {
+            font-size: 12px;
+        }
+
+        .profile-text strong {
+            display: block;
+        }
+
+        .profile-text span {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        /* PAGE */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn .3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-heading {
+            margin-bottom: 22px;
+        }
+
+        .page-heading h2 {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .page-heading p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* CARDS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 5px 20px rgba(30, 60, 90, .04);
+        }
+
+        .stat-info span {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .stat-info h3 {
+            font-size: 26px;
+            margin-top: 5px;
+        }
+
+        .stat-info small {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--blue-light);
+            color: var(--secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        /* GRID */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.3fr .7fr;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(30, 60, 90, .04);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .card-header h3 {
+            font-size: 15px;
+        }
+
+        .card-header p {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .chart-box {
+            height: 310px;
+            position: relative;
+        }
+
+        /* BUTTON */
+        .btn {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #eef2f7;
+            color: #334155;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .btn-warning {
+            background: #fff4d6;
+            color: #a16207;
+        }
+
+        /* FILTER */
+        .filter-bar {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #d9e1ea;
+            border-radius: 8px;
+            padding: 10px 11px;
+            font-size: 12px;
+            outline: none;
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(11,99,206,.08);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* TABLE */
+        .table-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(30, 60, 90, .04);
+        }
+
+        .table-top {
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-top h3 {
+            font-size: 15px;
+        }
+
+        .table-top p {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #475569;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            padding: 13px 12px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px 12px;
+            border-top: 1px solid #edf1f5;
+            font-size: 11px;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #fafcff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .badge-blue {
+            background: #eaf3ff;
+            color: #0755a5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            width: 29px;
+            height: 29px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-edit {
+            background: #fff4d6;
+            color: #a16207;
+        }
+
+        .action-delete {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,.55);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        }
+
+        .modal-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 17px;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 22px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .form-grid .full {
+            grid-column: 1 / -1;
+        }
+
+        .modal-footer {
+            padding: 15px 22px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* STATISTIK */
+        .monthly-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .month-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .month-card .month {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .month-card .number {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 5px 0 12px;
+        }
+
+        .progress {
+            height: 7px;
+            background: #edf2f7;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress span {
+            display: block;
+            height: 100%;
+            background: var(--secondary);
+            border-radius: 10px;
+        }
+
+        .month-card small {
+            display: block;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        /* EMPTY */
+        .empty {
+            text-align: center;
+            padding: 45px 20px;
+            color: var(--muted);
+        }
+
+        .empty i {
+            font-size: 35px;
+            margin-bottom: 12px;
+            opacity: .4;
+        }
+
+        .empty p {
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .monthly-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo-text,
+            .menu-title,
+            .menu button span,
+            .sidebar-bottom {
+                display: none;
+            }
+
+            .logo-area {
+                justify-content: center;
+                padding: 5px 0 30px;
+            }
+
+            .menu button {
+                text-align: center;
+            }
+
+            .menu button i {
+                margin: 0;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .profile-text {
+                display: none;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .monthly-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo-area">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div class="logo-text">
+            <h2>REKAP TAT</h2>
+            <p>BNN KOTA MOJOKERTO</p>
+        </div>
+
+    </div>
+
+    <div class="menu-title">
+        MENU UTAMA
+    </div>
+
+    <ul class="menu">
+
+        <li>
+            <button class="active" onclick="showPage('dashboard', this)">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </button>
+        </li>
+
+        <li>
+            <button onclick="showPage('data', this)">
+                <i class="fa-solid fa-database"></i>
+                <span>Data TAT</span>
+            </button>
+        </li>
+
+        <li>
+            <button onclick="showPage('statistik', this)">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Statistik</span>
+            </button>
+        </li>
+
+        <li>
+            <button onclick="openModal()">
+                <i class="fa-solid fa-plus"></i>
+                <span>Tambah Data</span>
+            </button>
+        </li>
+
+    </ul>
+
+    <div class="sidebar-bottom">
+        Sistem Rekapitulasi Data TAT<br>
+        BNN Kota Mojokerto
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    <header class="topbar">
+
+        <div class="topbar-title">
+
+            <h1>Sistem Rekapitulasi Data TAT</h1>
+
+            <p>
+                Pengelolaan dan pemantauan data TAT
+            </p>
+
+        </div>
+
+        <div class="profile">
+
+            <div class="profile-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div class="profile-text">
+                <strong>Admin</strong>
+                <span>Pengelola Data</span>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <div class="content">
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section id="dashboard" class="page active">
+
+            <div class="page-heading">
+
+                <h2>Dashboard</h2>
+
+                <p>
+                    Ringkasan data TAT tahun 2026
+                </p>
+
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <div class="stat-info">
+
+                        <span>Total Data TAT</span>
+
+                        <h3 id="totalData">
+                            0
+                        </h3>
+
+                        <small>
+                            Seluruh data
+                        </small>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-info">
+
+                        <span>TAT Bulan Ini</span>
+
+                        <h3 id="thisMonth">
+                            0
+                        </h3>
+
+                        <small id="currentMonthName">
+                            -
+                        </small>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-info">
+
+                        <span>Usia Rata-rata</span>
+
+                        <h3 id="avgAge">
+                            0
+                        </h3>
+
+                        <small>
+                            Tahun
+                        </small>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-user-group"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-info">
+
+                        <span>Data Terbaru</span>
+
+                        <h3 id="latestData">
+                            -
+                        </h3>
+
+                        <small>
+                            Tanggal TAT
+                        </small>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Rekap TAT Bulanan
+                            </h3>
+
+                            <p>
+                                Jumlah data berdasarkan bulan
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="chart-box">
+
+                        <canvas id="monthlyChart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Distribusi TAT
+                            </h3>
+
+                            <p>
+                                Persentase data tiap bulan
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="chart-box">
+
+                        <canvas id="pieChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Rekapitulasi Per Bulan
+                        </h3>
+
+                        <p>
+                            Data TAT tahun 2026
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div id="monthlySummary" class="monthly-grid"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DATA ================= -->
+
+        <section id="data" class="page">
+
+            <div class="page-heading">
+
+                <h2>Data TAT</h2>
+
+                <p>
+                    Kelola seluruh data TAT
+                </p>
+
+            </div>
+
+
+            <div class="filter-bar">
+
+                <div class="form-group">
+
+                    <label>
+                        Cari Data
+                    </label>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Cari nama, NIK, alamat..."
+                        oninput="renderTable()"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Filter Bulan TAT
+                    </label>
+
+                    <select
+                        id="monthFilter"
+                        onchange="renderTable()"
+                    >
+
+                        <option value="">
+                            Semua Bulan
+                        </option>
+
+                        <option value="Januari">
+                            Januari
+                        </option>
+
+                        <option value="Februari">
+                            Februari
+                        </option>
+
+                        <option value="Maret">
+                            Maret
+                        </option>
+
+                        <option value="April">
+                            April
+                        </option>
+
+                        <option value="Mei">
+                            Mei
+                        </option>
+
+                        <option value="Juni">
+                            Juni
+                        </option>
+
+                        <option value="Juli">
+                            Juli
+                        </option>
+
+                        <option value="Agustus">
+                            Agustus
+                        </option>
+
+                        <option value="September">
+                            September
+                        </option>
+
+                        <option value="Oktober">
+                            Oktober
+                        </option>
+
+                        <option value="November">
+                            November
+                        </option>
+
+                        <option value="Desember">
+                            Desember
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    class="btn btn-primary"
+                    onclick="openModal()"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    Tambah Data
+                </button>
+
+
+                <button
+                    class="btn btn-success"
+                    onclick="exportCSV()"
+                >
+                    <i class="fa-solid fa-file-csv"></i>
+                    Export CSV
+                </button>
+
+            </div>
+
+
+            <div class="table-card">
+
+                <div class="table-top">
+
+                    <div>
+
+                        <h3>
+                            Daftar Data TAT
+                        </h3>
+
+                        <p>
+                            Data asesmen tersangka
+                        </p>
+
+                    </div>
+
+                    <span
+                        class="badge badge-blue"
+                        id="dataCount"
+                    >
+                        0 Data
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>No</th>
+                                <th>Nama Tersangka</th>
+                                <th>NIK</th>
+                                <th>Alamat</th>
+                                <th>Usia</th>
+                                <th>Pekerjaan</th>
+                                <th>Pendidikan</th>
+
+                                <!-- DIUBAH -->
+                                <th>Tanggal TAT</th>
+
+                                <th>Aksi</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="dataTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= STATISTIK ================= -->
+
+        <section id="statistik" class="page">
+
+            <div class="page-heading">
+
+                <h2>Statistik</h2>
+
+                <p>
+                    Analisis statistik data TAT tahun 2026
+                </p>
+
+            </div>
+
+
+            <div class="card" style="margin-bottom:22px;">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Grafik Data TAT
+                        </h3>
+
+                        <p>
+                            Perbandingan jumlah TAT setiap bulan
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="chart-box">
+
+                    <canvas id="barChart"></canvas>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Distribusi Data
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <div class="chart-box">
+
+                        <canvas id="statPieChart"></canvas>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Keterangan
+                            </h3>
+
+                            <p>
+                                Informasi statistik
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div style="line-height:2;font-size:12px;">
+
+                        <p>
+                            <strong>Total Data:</strong>
+                            <span id="statTotal">0</span>
+                        </p>
+
+                        <p>
+                            <strong>Rata-rata Usia:</strong>
+                            <span id="statAvgAge">0</span> tahun
+                        </p>
+
+                        <p>
+                            <strong>Bulan dengan Data Terbanyak:</strong>
+                            <span id="statTopMonth">-</span>
+                        </p>
+
+                        <p>
+                            <strong>Jumlah Terbanyak:</strong>
+                            <span id="statTopCount">0</span> data
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+<!-- ================= MODAL ================= -->
+
+<div
+    class="modal"
+    id="dataModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h3 id="modalTitle">
+                Tambah Data TAT
+            </h3>
+
+            <button
+                class="close-btn"
+                onclick="closeModal()"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <form id="dataForm" onsubmit="saveData(event)">
+
+            <div class="modal-body">
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Nama Tersangka *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nama"
+                            required
+                            placeholder="Masukkan nama"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            NIK *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nik"
+                            required
+                            placeholder="Masukkan NIK"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group full">
+
+                        <label>
+                            Alamat *
+                        </label>
+
+                        <textarea
+                            id="alamat"
+                            required
+                            placeholder="Masukkan alamat"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Usia *
+                        </label>
+
+                        <input
+                            type="number"
+                            id="usia"
+                            min="1"
+                            max="100"
+                            required
+                            placeholder="Contoh: 25"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Pekerjaan *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pekerjaan"
+                            required
+                            placeholder="Masukkan pekerjaan"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Pendidikan *
+                        </label>
+
+                        <select
+                            id="pendidikan"
+                            required
+                        >
+
+                            <option value="">
+                                Pilih Pendidikan
+                            </option>
+
+                            <option value="SD">
+                                SD
+                            </option>
+
+                            <option value="SMP">
+                                SMP
+                            </option>
+
+                            <option value="SMA/SMK">
+                                SMA/SMK
+                            </option>
+
+                            <option value="D3">
+                                D3
+                            </option>
+
+                            <option value="S1">
+                                S1
+                            </option>
+
+                            <option value="S2">
+                                S2
+                            </option>
+
+                            <option value="S3">
+                                S3
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- INI YANG BERUBAH -->
+                    <div class="form-group">
+
+                        <label>
+                            Tanggal TAT *
+                        </label>
+
+                        <input
+                            type="date"
+                            id="tanggal"
+                            required
+                        >
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="closeModal()"
+                >
+                    Batal
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="fa-solid fa-save"></i>
+                    Simpan Data
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ==================================================
+       DATA
+    ================================================== */
+
+    const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+
+    let dataTAT = JSON.parse(
+        localStorage.getItem("dataTAT")
+    ) || [
+
+        {
+            nama: "Andi Pratama",
+            nik: "3576010101010001",
+            alamat: "Mojokerto",
+            usia: 25,
+            pekerjaan: "Swasta",
+            pendidikan: "SMA/SMK",
+            tanggal: "2026-04-22"
+        },
+
+        {
+            nama: "Budi Santoso",
+            nik: "3576010202020002",
+            alamat: "Mojokerto",
+            usia: 31,
+            pekerjaan: "Wiraswasta",
+            pendidikan: "SMA/SMK",
+            tanggal: "2026-04-25"
+        },
+
+        {
+            nama: "Citra Dewi",
+            nik: "3576010303030003",
+            alamat: "Sidoarjo",
+            usia: 23,
+            pekerjaan: "Karyawan",
+            pendidikan: "S1",
+            tanggal: "2026-05-10"
+        },
+
+        {
+            nama: "Dimas Saputra",
+            nik: "3576010404040004",
+            alamat: "Surabaya",
+            usia: 28,
+            pekerjaan: "Swasta",
+            pendidikan: "SMA/SMK",
+            tanggal: "2026-06-15"
+        },
+
+        {
+            nama: "Eko Wijaya",
+            nik: "3576010505050005",
+            alamat: "Mojokerto",
+            usia: 35,
+            pekerjaan: "Wiraswasta",
+            pendidikan: "SMA/SMK",
+            tanggal: "2026-07-08"
+        },
+
+        {
+            nama: "Fajar Ramadhan",
+            nik: "3576010606060006",
+            alamat: "Jombang",
+            usia: 27,
+            pekerjaan: "Karyawan",
+            pendidikan: "SMA/SMK",
+            tanggal: "2026-08-12"
+        },
+
+        {
+            nama: "Galih Setiawan",
+            nik: "3576010707070007",
+            alamat: "Mojokerto",
+            usia: 30,
+            pekerjaan: "Swasta",
+            pendidikan: "S1",
+            tanggal: "2026-09-18"
+        },
+
+        {
+            nama: "Hendra Kurniawan",
+            nik: "3576010808080008",
+            alamat: "Mojokerto",
+            usia: 29,
+            pekerjaan: "Wiraswasta",
+            pendidikan: "SMA/SMK",
+            tanggal: "2026-10-05"
+        }
+
+    ];
+
+
+    let editIndex = null;
+
+
+    /* ==================================================
+       HELPER TANGGAL
+    ================================================== */
+
+    function getMonthName(dateValue) {
+
+        if (!dateValue) {
+            return "";
+        }
+
+        const date =
+            new Date(dateValue + "T00:00:00");
+
+        if (isNaN(date.getTime())) {
+            return "";
+        }
+
+        return date.toLocaleDateString(
+            "id-ID",
+            {
+                month: "long"
+            }
+        );
+
+    }
+
+
+    function formatDate(dateValue) {
+
+        if (!dateValue) {
+            return "-";
+        }
+
+        const date =
+            new Date(dateValue + "T00:00:00");
+
+        if (isNaN(date.getTime())) {
+            return "-";
+        }
+
+        return date.toLocaleDateString(
+            "id-ID",
+            {
+                day: "2-digit",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+    function monthToDate(month) {
+
+        const monthNumber = {
+
+            "Januari": "01",
+            "Februari": "02",
+            "Maret": "03",
+            "April": "04",
+            "Mei": "05",
+            "Juni": "06",
+            "Juli": "07",
+            "Agustus": "08",
+            "September": "09",
+            "Oktober": "10",
+            "November": "11",
+            "Desember": "12"
+
+        };
+
+        if (!monthNumber[month]) {
+            return "";
+        }
+
+        return `2026-${monthNumber[month]}-01`;
+
+    }
+
+
+    /* ==================================================
+       MIGRASI DATA LAMA
+    ================================================== */
+
+    dataTAT = dataTAT.map(item => {
+
+        if (!item.tanggal && item.bulan) {
+
+            item.tanggal =
+                monthToDate(item.bulan);
+
+            delete item.bulan;
+
+        }
+
+        return item;
+
+    });
+
+
+    localStorage.setItem(
+        "dataTAT",
+        JSON.stringify(dataTAT)
+    );
+
+
+    /* ==================================================
+       SAVE DATA
+    ================================================== */
+
+    function saveDataToStorage() {
+
+        localStorage.setItem(
+            "dataTAT",
+            JSON.stringify(dataTAT)
+        );
+
+    }
+
+
+    /* ==================================================
+       NAVIGASI
+    ================================================== */
+
+    function showPage(pageId, button) {
+
+        document
+            .querySelectorAll(".page")
+            .forEach(page => {
+
+                page.classList.remove("active");
+
+            });
+
+
+        document
+            .getElementById(pageId)
+            .classList.add("active");
+
+
+        document
+            .querySelectorAll(".menu button")
+            .forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+        if (button) {
+
+            button.classList.add("active");
+
+        }
+
+
+        if (pageId === "dashboard") {
+
+            updateDashboard();
+
+            setTimeout(() => {
+                updateCharts();
+            }, 50);
+
+        }
+
+
+        if (pageId === "statistik") {
+
+            updateStatistics();
+
+            setTimeout(() => {
+                updateCharts();
+            }, 50);
+
+        }
+
+
+        if (pageId === "data") {
+
+            renderTable();
+
+        }
+
+    }
+
+
+    /* ==================================================
+       MODAL
+    ================================================== */
+
+    function openModal(index = null) {
+
+        editIndex = index;
+
+
+        document
+            .getElementById("dataModal")
+            .classList.add("show");
+
+
+        if (index !== null) {
+
+            document
+                .getElementById("modalTitle")
+                .textContent =
+                "Edit Data TAT";
+
+
+            const item =
+                dataTAT[index];
+
+
+            document
+                .getElementById("nama")
+                .value =
+                item.nama || "";
+
+
+            document
+                .getElementById("nik")
+                .value =
+                item.nik || "";
+
+
+            document
+                .getElementById("alamat")
+                .value =
+                item.alamat || "";
+
+
+            document
+                .getElementById("usia")
+                .value =
+                item.usia || "";
+
+
+            document
+                .getElementById("pekerjaan")
+                .value =
+                item.pekerjaan || "";
+
+
+            document
+                .getElementById("pendidikan")
+                .value =
+                item.pendidikan || "";
+
+
+            document
+                .getElementById("tanggal")
+                .value =
+                item.tanggal ||
+                monthToDate(item.bulan);
+
+        }
+
+        else {
+
+            document
+                .getElementById("modalTitle")
+                .textContent =
+                "Tambah Data TAT";
+
+
+            document
+                .getElementById("dataForm")
+                .reset();
+
+        }
+
+    }
+
+
+    function closeModal() {
+
+        document
+            .getElementById("dataModal")
+            .classList.remove("show");
+
+
+        document
+            .getElementById("dataForm")
+            .reset();
+
+
+        editIndex = null;
+
+    }
+
+
+    /* ==================================================
+       SIMPAN DATA
+    ================================================== */
+
+    function saveData(event) {
+
+        event.preventDefault();
+
+
+        const item = {
+
+            nama:
+                document
+                    .getElementById("nama")
+                    .value
+                    .trim(),
+
+            nik:
+                document
+                    .getElementById("nik")
+                    .value
+                    .trim(),
+
+            alamat:
+                document
+                    .getElementById("alamat")
+                    .value
+                    .trim(),
+
+            usia:
+                Number(
+                    document
+                        .getElementById("usia")
+                        .value
+                ),
+
+            pekerjaan:
+                document
+                    .getElementById("pekerjaan")
+                    .value
+                    .trim(),
+
+            pendidikan:
+                document
+                    .getElementById("pendidikan")
+                    .value,
+
+            tanggal:
+                document
+                    .getElementById("tanggal")
+                    .value
+
+        };
+
+
+        const wasEditing =
+            editIndex !== null;
+
+
+        if (wasEditing) {
+
+            dataTAT[editIndex] =
+                item;
+
+        }
+
+        else {
+
+            dataTAT.push(item);
+
+        }
+
+
+        saveDataToStorage();
+
+        closeModal();
+
+        renderTable();
+
+        updateDashboard();
+
+        updateStatistics();
+
+        updateCharts();
+
+
+        alert(
+            wasEditing
+                ? "Data berhasil diperbarui."
+                : "Data berhasil ditambahkan."
+        );
+
+    }
+
+
+    /* ==================================================
+       DELETE
+    ================================================== */
+
+    function deleteData(index) {
+
+        const item =
+            dataTAT[index];
+
+
+        if (
+            confirm(
+                `Hapus data ${item.nama}?`
+            )
+        ) {
+
+            dataTAT.splice(index, 1);
+
+            saveDataToStorage();
+
+            renderTable();
+
+            updateDashboard();
+
+            updateStatistics();
+
+            updateCharts();
+
+        }
+
+    }
+
+
+    /* ==================================================
+       TABLE
+    ================================================== */
+
+    function renderTable() {
+
+        const tbody =
+            document.getElementById(
+                "dataTableBody"
+            );
+
+
+        const search =
+            document
+                .getElementById("searchInput")
+                .value
+                .toLowerCase()
+                .trim();
+
+
+        const month =
+            document
+                .getElementById("monthFilter")
+                .value;
+
+
+        const filtered =
+            dataTAT.filter(item => {
+
+                const text = (
+
+                    item.nama + " " +
+                    item.nik + " " +
+                    item.alamat + " " +
+                    item.pekerjaan + " " +
+                    item.pendidikan
+
+                ).toLowerCase();
+
+
+                const itemMonth =
+                    getMonthName(
+                        item.tanggal ||
+                        monthToDate(item.bulan)
+                    );
+
+
+                const matchSearch =
+                    !search ||
+                    text.includes(search);
+
+
+                const matchMonth =
+                    !month ||
+                    itemMonth === month;
+
+
+                return (
+                    matchSearch &&
+                    matchMonth
+                );
+
+            });
+
+
+        document
+            .getElementById("dataCount")
+            .textContent =
+            `${filtered.length} Data`;
+
+
+        if (filtered.length === 0) {
+
+            tbody.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="empty"
+                    >
+
+                        <i class="fa-solid fa-folder-open"></i>
+
+                        <p>
+                            Belum ada data yang ditemukan.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        tbody.innerHTML =
+            filtered
+                .map((item) => {
+
+                    const originalIndex =
+                        dataTAT.indexOf(item);
+
+
+                    return `
+
+                        <tr>
+
+                            <td>
+                                ${filtered.indexOf(item) + 1}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    ${escapeHTML(item.nama)}
+                                </strong>
+                            </td>
+
+                            <td>
+                                ${escapeHTML(item.nik)}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(item.alamat)}
+                            </td>
+
+                            <td>
+                                ${item.usia}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(item.pekerjaan)}
+                            </td>
+
+                            <td>
+                                ${escapeHTML(item.pendidikan)}
+                            </td>
+
+                            <td>
+                                <span class="badge badge-blue">
+                                    ${formatDate(
+                                        item.tanggal ||
+                                        monthToDate(item.bulan)
+                                    )}
+                                </span>
+                            </td>
+
+                            <td>
+
+                                <div class="action-buttons">
+
+                                    <button
+                                        class="action-btn action-edit"
+                                        onclick="openModal(${originalIndex})"
+                                        title="Edit"
+                                    >
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+
+                                    <button
+                                        class="action-btn action-delete"
+                                        onclick="deleteData(${originalIndex})"
+                                        title="Hapus"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                })
+                .join("");
+
+    }
+
+
+    /* ==================================================
+       DASHBOARD
+    ================================================== */
+
+    function updateDashboard() {
+
+        const total =
+            dataTAT.length;
+
+
+        document
+            .getElementById("totalData")
+            .textContent =
+            total;
+
+
+        const currentDate =
+            new Date();
+
+
+        const currentMonth =
+            months[
+                currentDate.getMonth()
+            ];
+
+
+        const thisMonth =
+            dataTAT.filter(item => {
+
+                return (
+                    getMonthName(
+                        item.tanggal ||
+                        monthToDate(item.bulan)
+                    ) === currentMonth
+                );
+
+            }).length;
+
+
+        document
+            .getElementById("thisMonth")
+            .textContent =
+            thisMonth;
+
+
+        document
+            .getElementById("currentMonthName")
+            .textContent =
+            currentMonth;
+
+
+        const ages =
+            dataTAT
+                .map(item => Number(item.usia))
+                .filter(age => age > 0);
+
+
+        const avgAge =
+            ages.length
+                ? (
+                    ages.reduce(
+                        (a, b) => a + b,
+                        0
+                    ) / ages.length
+                ).toFixed(1)
+                : 0;
+
+
+        document
+            .getElementById("avgAge")
+            .textContent =
+            avgAge;
+
+
+        if (dataTAT.length) {
+
+            const sorted =
+                [...dataTAT]
+                    .filter(item => item.tanggal)
+                    .sort(
+                        (a, b) =>
+                            new Date(b.tanggal) -
+                            new Date(a.tanggal)
+                    );
+
+
+            document
+                .getElementById("latestData")
+                .textContent =
+                sorted.length
+                    ? formatDate(sorted[0].tanggal)
+                    : "-";
+
+        }
+
+        else {
+
+            document
+                .getElementById("latestData")
+                .textContent =
+                "-";
+
+        }
+
+
+        updateMonthlySummary();
+
+    }
+
+
+    /* ==================================================
+       MONTHLY COUNTS
+    ================================================== */
+
+    function getMonthlyCounts() {
+
+        return months.map(month => {
+
+            return dataTAT.filter(item => {
+
+                const itemMonth =
+                    getMonthName(
+                        item.tanggal ||
+                        monthToDate(item.bulan)
+                    );
+
+
+                return itemMonth === month;
+
+            }).length;
+
+        });
+
+    }
+
+
+    /* ==================================================
+       MONTHLY SUMMARY
+    ================================================== */
+
+    function updateMonthlySummary() {
+
+        const container =
+            document.getElementById(
+                "monthlySummary"
+            );
+
+
+        const counts =
+            getMonthlyCounts();
+
+
+        const total =
+            counts.reduce(
+                (a, b) => a + b,
+                0
+            );
+
+
+        const max =
+            Math.max(
+                ...counts,
+                1
+            );
+
+
+        container.innerHTML = "";
+
+
+        months.forEach((month, index) => {
+
+            const count =
+                counts[index];
+
+
+            const percentage =
+                total > 0
+                    ? ((count / total) * 100).toFixed(1)
+                    : 0;
+
+
+            const progress =
+                ((count / max) * 100);
+
+
+            container.innerHTML += `
+
+                <div class="month-card">
+
+                    <div class="month">
+                        ${month} 2026
+                    </div>
+
+                    <div class="number">
+                        ${count}
+                    </div>
+
+                    <div class="progress">
+
+                        <span
+                            style="width:${progress}%"
+                        ></span>
+
+                    </div>
+
+                    <small>
+                        ${percentage}% dari seluruh data
+                    </small>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+
+    /* ==================================================
+       STATISTIK
+    ================================================== */
+
+    function updateStatistics() {
+
+        const total =
+            dataTAT.length;
+
+
+        document
+            .getElementById("statTotal")
+            .textContent =
+            total;
+
+
+        const ages =
+            dataTAT
+                .map(item => Number(item.usia))
+                .filter(age => age > 0);
+
+
+        const avgAge =
+            ages.length
+                ? (
+                    ages.reduce(
+                        (a, b) => a + b,
+                        0
+                    ) / ages.length
+                ).toFixed(1)
+                : 0;
+
+
+        document
+            .getElementById("statAvgAge")
+            .textContent =
+            avgAge;
+
+
+        const counts =
+            getMonthlyCounts();
+
+
+        let maxIndex = 0;
+
+
+        counts.forEach((count, index) => {
+
+            if (count > counts[maxIndex]) {
+
+                maxIndex = index;
+
+            }
+
+        });
+
+
+        document
+            .getElementById("statTopMonth")
+            .textContent =
+            total > 0
+                ? months[maxIndex]
+                : "-";
+
+
+        document
+            .getElementById("statTopCount")
+            .textContent =
+            total > 0
+                ? counts[maxIndex]
+                : 0;
+
+    }
+
+
+    /* ==================================================
+       CHART
+    ================================================== */
+
+    let monthlyChart;
+    let pieChart;
+    let barChart;
+    let statPieChart;
+
+
+    function updateCharts() {
+
+        if (typeof Chart === "undefined") {
+
+            console.error(
+                "Chart.js belum berhasil dimuat."
+            );
+
+            return;
+
+        }
+
+
+        const counts =
+            getMonthlyCounts();
+
+
+        /* MONTHLY BAR */
+
+        const monthlyCanvas =
+            document.getElementById(
+                "monthlyChart"
+            );
+
+
+        if (monthlyChart) {
+
+            monthlyChart.destroy();
+
+        }
+
+
+        if (monthlyCanvas) {
+
+            monthlyChart =
+                new Chart(
+                    monthlyCanvas,
+                    {
+
+                        type: "bar",
+
+                        data: {
+
+                            labels:
+                                months.map(
+                                    month =>
+                                        month + " 2026"
+                                ),
+
+                            datasets: [
+
+                                {
+
+                                    label:
+                                        "Jumlah TAT",
+
+                                    data:
+                                        counts,
+
+                                    backgroundColor:
+                                        "#0b63ce",
+
+                                    borderRadius:
+                                        7,
+
+                                    borderSkipped:
+                                        false
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    display:
+                                        false
+
+                                }
+
+                            },
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero:
+                                        true,
+
+                                    ticks: {
+
+                                        precision:
+                                            0
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+        }
+
+
+        /* PIE */
+
+        const pieCanvas =
+            document.getElementById(
+                "pieChart"
+            );
+
+
+        if (pieChart) {
+
+            pieChart.destroy();
+
+        }
+
+
+        if (pieCanvas) {
+
+            pieChart =
+                new Chart(
+                    pieCanvas,
+                    {
+
+                        type:
+                            "doughnut",
+
+                        data: {
+
+                            labels:
+                                months.map(
+                                    month =>
+                                        month + " 2026"
+                                ),
+
+                            datasets: [
+
+                                {
+
+                                    data:
+                                        counts,
+
+                                    backgroundColor: [
+
+                                        "#0755a5",
+                                        "#0b63ce",
+                                        "#0b8cff",
+                                        "#35a7ff",
+                                        "#4cc9f0",
+                                        "#4895ef",
+                                        "#4361ee",
+                                        "#3a0ca3",
+                                        "#7209b7",
+                                        "#b5179e",
+                                        "#f72585",
+                                        "#4cc9f0"
+
+                                    ],
+
+                                    borderWidth:
+                                        3,
+
+                                    borderColor:
+                                        "#ffffff"
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            cutout:
+                                "58%",
+
+                            plugins: {
+
+                                legend: {
+
+                                    position:
+                                        "bottom",
+
+                                    labels: {
+
+                                        font: {
+
+                                            size:
+                                                9
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+        }
+
+
+        /* STATISTIK BAR */
+
+        const barCanvas =
+            document.getElementById(
+                "barChart"
+            );
+
+
+        if (barChart) {
+
+            barChart.destroy();
+
+        }
+
+
+        if (barCanvas) {
+
+            barChart =
+                new Chart(
+                    barCanvas,
+                    {
+
+                        type:
+                            "bar",
+
+                        data: {
+
+                            labels:
+                                months.map(
+                                    month =>
+                                        month + " 2026"
+                                ),
+
+                            datasets: [
+
+                                {
+
+                                    label:
+                                        "Jumlah TAT",
+
+                                    data:
+                                        counts,
+
+                                    backgroundColor:
+                                        "#0755a5",
+
+                                    borderRadius:
+                                        8
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero:
+                                        true,
+
+                                    ticks: {
+
+                                        precision:
+                                            0
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+        }
+
+
+        /* STATISTIK PIE */
+
+        const statPieCanvas =
+            document.getElementById(
+                "statPieChart"
+            );
+
+
+        if (statPieChart) {
+
+            statPieChart.destroy();
+
+        }
+
+
+        if (statPieCanvas) {
+
+            statPieChart =
+                new Chart(
+                    statPieCanvas,
+                    {
+
+                        type:
+                            "pie",
+
+                        data: {
+
+                            labels:
+                                months.map(
+                                    month =>
+                                        month + " 2026"
+                                ),
+
+                            datasets: [
+
+                                {
+
+                                    data:
+                                        counts,
+
+                                    backgroundColor: [
+
+                                        "#0755a5",
+                                        "#0b63ce",
+                                        "#0b8cff",
+                                        "#35a7ff",
+                                        "#4cc9f0",
+                                        "#4895ef",
+                                        "#4361ee",
+                                        "#3a0ca3",
+                                        "#7209b7",
+                                        "#b5179e",
+                                        "#f72585",
+                                        "#4cc9f0"
+
+                                    ],
+
+                                    borderColor:
+                                        "#fff",
+
+                                    borderWidth:
+                                        3
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive:
+                                true,
+
+                            maintainAspectRatio:
+                                false,
+
+                            plugins: {
+
+                                legend: {
+
+                                    position:
+                                        "bottom"
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+        }
+
+    }
+
+
+    /* ==================================================
+       EXPORT CSV
+    ================================================== */
+
+    function exportCSV() {
+
+        if (dataTAT.length === 0) {
+
+            alert(
+                "Belum ada data untuk diekspor."
+            );
+
+            return;
+
+        }
+
+
+        let csv =
+            "No,Nama Tersangka,NIK,Alamat,Usia,Pekerjaan,Pendidikan,Tanggal TAT\n";
+
+
+        dataTAT.forEach(
+            (item, index) => {
+
+                csv += [
+
+                    index + 1,
+
+                    csvEscape(item.nama),
+
+                    csvEscape(item.nik),
+
+                    csvEscape(item.alamat),
+
+                    csvEscape(item.usia),
+
+                    csvEscape(item.pekerjaan),
+
+                    csvEscape(item.pendidikan),
+
+                    csvEscape(
+                        formatDate(
+                            item.tanggal ||
+                            monthToDate(item.bulan)
+                        )
+                    )
+
+                ].join(",") + "\n";
+
+            }
+        );
+
+
+        const blob =
+            new Blob(
+                [csv],
+                {
+                    type:
+                        "text/csv;charset=utf-8;"
+                }
+            );
+
+
+        const url =
+            URL.createObjectURL(blob);
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href =
+            url;
+
+
+        link.download =
+            "rekap-data-TAT-2026.csv";
+
+
+        link.click();
+
+
+        URL.revokeObjectURL(url);
+
+    }
+
+
+    function csvEscape(value) {
+
+        return '"' +
+            String(value)
+                .replace(
+                    /"/g,
+                    '""'
+                ) +
+            '"';
+
+    }
+
+
+    /* ==================================================
+       SECURITY
+    ================================================== */
+
+    function escapeHTML(value) {
+
+        return String(value)
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* ==================================================
+       FILTER
+    ================================================== */
+
+    document
+        .getElementById("monthFilter")
+        .addEventListener(
+            "change",
+            function() {
+
+                renderTable();
+
+            }
+        );
+
+
+    /* ==================================================
+       CLOSE MODAL
+    ================================================== */
+
+    document
+        .getElementById("dataModal")
+        .addEventListener(
+            "click",
+            function(e) {
+
+                if (e.target === this) {
+
+                    closeModal();
+
+                }
+
+            }
+        );
+
+
+    /* ==================================================
+       INITIAL LOAD
+    ================================================== */
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            renderTable();
+
+            updateDashboard();
+
+            updateStatistics();
+
+            updateCharts();
+
+        }
+    );
+
+</script>
+<!-- ================= LOGIN SCREEN ================= -->
+<style>
+    /* LOGIN SCREEN */
+    #loginScreen {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #001b44, #003b82, #0066cc);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .login-box {
+        width: 390px;
+        max-width: 90%;
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 22px;
+        padding: 35px 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        text-align: center;
+    }
+
+    .login-icon {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #003b82, #0066ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 32px;
+        box-shadow: 0 8px 25px rgba(0, 82, 180, 0.35);
+    }
+
+    .login-box h1 {
+        margin: 0;
+        color: #002b5c;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .login-box p {
+        margin: 8px 0 25px;
+        color: #666;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .login-input {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .login-input i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0066cc;
+        font-size: 16px;
+    }
+
+    .login-input input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 50px;
+        border: 1px solid #d6dce5;
+        border-radius: 12px;
+        padding: 0 45px;
+        outline: none;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        transition: 0.3s;
+        background: #f8fafc;
+    }
+
+    .login-input input:focus {
+        border-color: #0066cc;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.10);
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        left: auto !important;
+        cursor: pointer;
+        color: #777 !important;
+    }
+
+    .login-button {
+        width: 100%;
+        height: 50px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #003b82, #0066ff);
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: 0.3s;
+    }
+
+    .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 102, 255, 0.30);
+    }
+
+    .login-button:active {
+        transform: translateY(0);
+    }
+
+    .login-error {
+        display: none;
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        background: #ffe8e8;
+        color: #d00000;
+        font-size: 12px;
+    }
+
+    .login-footer {
+        margin-top: 20px;
+        font-size: 11px;
+        color: #888;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 500px) {
+        .login-box {
+            padding: 30px 22px;
+        }
+
+        .login-box h1 {
+            font-size: 22px;
+        }
+    }
+</style>
+
+<!-- LOGIN HTML -->
+<div id="loginScreen">
+
+    <div class="login-box">
+
+        <div class="login-icon">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+
+        <h1>LOGIN SISTEM TAT</h1>
+
+        <p>
+            Sistem Rekapitulasi Data TAT<br>
+            BNN Kota Mojokerto
+        </p>
+
+        <!-- EMAIL -->
+        <div class="login-input">
+            <i class="fas fa-envelope"></i>
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Masukkan email"
+                autocomplete="username"
+            >
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="login-input">
+
+            <i class="fas fa-lock"></i>
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Masukkan password"
+                autocomplete="current-password"
+            >
+
+            <i
+                class="fas fa-eye password-toggle"
+                id="togglePassword"
+                title="Tampilkan password"
+            ></i>
+
+        </div>
+
+        <!-- BUTTON -->
+        <button
+            type="button"
+            class="login-button"
+            id="loginButton"
+        >
+            <i class="fas fa-right-to-bracket"></i>
+            &nbsp; Masuk ke Sistem
+        </button>
+
+        <!-- ERROR -->
+        <div
+            class="login-error"
+            id="loginError"
+        >
+            <i class="fas fa-circle-exclamation"></i>
+            Email atau password salah!
+        </div>
+
+        <div class="login-footer">
+            © BNN Kota Mojokerto
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= SCRIPT LOGIN ================= -->
+<script>
+    /* =====================================================
+       PENGATURAN EMAIL DAN PASSWORD
+       ===================================================== */
+
+    const LOGIN_EMAIL = "berantas.mjkt@gmail.com";
+    const LOGIN_PASSWORD = "Adminberantas";
+
+
+    /* =====================================================
+       ELEMENT LOGIN
+       ===================================================== */
+
+    const loginScreen = document.getElementById("loginScreen");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginButton = document.getElementById("loginButton");
+    const loginError = document.getElementById("loginError");
+    const togglePassword = document.getElementById("togglePassword");
+
+
+    /* =====================================================
+       CEK LOGIN SEBELUMNYA
+       ===================================================== */
+
+    if (sessionStorage.getItem("TAT_LOGIN") === "true") {
+
+        loginScreen.style.display = "none";
+
+        document.body.style.overflow = "auto";
+
+    } else {
+
+        loginScreen.style.display = "flex";
+
+        document.body.style.overflow = "hidden";
+    }
+
+
+    /* =====================================================
+       TOMBOL LOGIN
+       ===================================================== */
+
+    loginButton.addEventListener("click", function () {
+
+        const email = loginEmail.value.trim();
+        const password = loginPassword.value;
+
+
+        /* CEK EMAIL DAN PASSWORD */
+
+        if (
+            email === LOGIN_EMAIL &&
+            password === LOGIN_PASSWORD
+        ) {
+
+            /* SIMPAN STATUS LOGIN */
+
+            sessionStorage.setItem("TAT_LOGIN", "true");
+
+
+            /* HILANGKAN LOGIN */
+
+            loginScreen.style.display = "none";
+
+            document.body.style.overflow = "auto";
+
+
+            /* HAPUS PESAN ERROR */
+
+            loginError.style.display = "none";
+
+        } else {
+
+            /* TAMPILKAN ERROR */
+
+            loginError.style.display = "block";
+
+
+            /* KOSONGKAN PASSWORD */
+
+            loginPassword.value = "";
+
+            loginPassword.focus();
+        }
+
+    });
+
+
+    /* =====================================================
+       ENTER UNTUK LOGIN
+       ===================================================== */
+
+    loginEmail.addEventListener("keypress", function (event) {
+
+        if (event.key === "Enter") {
+            loginButton.click();
+        }
+
+    });
+
+
+    loginPassword.addEventListener("keypress", function (event) {
+
+        if (event.key === "Enter") {
+            loginButton.click();
+        }
+
+    });
+
+
+    /* =====================================================
+       TAMPILKAN / SEMBUNYIKAN PASSWORD
+       ===================================================== */
+
+    togglePassword.addEventListener("click", function () {
+
+        if (loginPassword.type === "password") {
+
+            loginPassword.type = "text";
+
+            togglePassword.classList.remove("fa-eye");
+
+            togglePassword.classList.add("fa-eye-slash");
+
+        } else {
+
+            loginPassword.type = "password";
+
+            togglePassword.classList.remove("fa-eye-slash");
+
+            togglePassword.classList.add("fa-eye");
+
+        }
+
+    });
+</script>
+<!-- ================= END LOGIN SCREEN ================= -->
+
+</body>
+</html> 
